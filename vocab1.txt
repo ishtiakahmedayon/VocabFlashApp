@@ -1,0 +1,10 @@
+Keen,Very eager or interested
+Legitimate,Lawful or acceptable
+Modify,Change slightly
+Neglect,Ignore or fail to care for
+Obtain,Get or acquire
+Persist,Continue firmly
+Query,Ask or question
+Reluctant,Unwilling or hesitant
+Sustain,Maintain or support
+Thrive,Grow or develop well
