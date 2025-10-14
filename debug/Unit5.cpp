@@ -6,6 +6,8 @@
 #pragma package(smart_init)
 #pragma resource "*.dfm"
 #include <chrono>
+#include <cstdlib>
+
 
 TForm5 *Form5;
 

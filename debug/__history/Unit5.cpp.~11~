@@ -5,22 +5,31 @@
 #include <string>
 #pragma package(smart_init)
 #pragma resource "*.dfm"
+#include <chrono>
 
 TForm5 *Form5;
 
 __fastcall TForm5::TForm5(TComponent* Owner)
     : TForm(Owner)
 {
-    currentIndex = -1;
+	currentIndex = -1;
+	shufflePosition = 0;
+}
+
+
+void BetterRandomize() {
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+	srand(seed);  // seed for rand()
 }
 
 void __fastcall TForm5::FormCreate(TObject *Sender)
 {
-    Randomize();
+    BetterRandomize();
     LoadVocabularyFiles();
     LabelMeaning->Visible = false;
 
 	if (vocabulary.size() > 0) {
+		ShuffleWords();
 		ShowRandomWord();
     } else {
         LabelWord->Caption = "No vocabulary loaded!";
@@ -34,8 +43,8 @@ void TForm5::LoadVocabularyFiles()
 {
 
 
-//	std::string filePath = ".\\vocab1.txt";
-	std::string filePath = "C:/temp/vocab1.txt";
+	std::string filePath = ".\\vocab.txt";
+//	std::string filePath = "C:/temp/vocab1.txt";
 	std::ifstream file(filePath);
 
     if (file.is_open()) {
@@ -56,16 +65,46 @@ void TForm5::LoadVocabularyFiles()
         }
         file.close();
 //        ShowMessage("Loaded " + IntToStr((int)vocabulary.size()) + " words!");
-    } else {
+	} else {
 		ShowMessage("Could not open vocab.txt!");
     }
+}
+
+
+void TForm5::ShuffleWords()
+{
+
+	shuffledIndices.clear();
+    for (int i = 0; i < vocabulary.size(); i++) {
+		shuffledIndices.push_back(i);
+	}
+
+	// Fisher-Yates shuffle algorithm
+	for (int i = shuffledIndices.size() - 1; i > 0; i--) {
+		int j = random(i + 1);
+		// Swap
+		int temp = shuffledIndices[i];
+        shuffledIndices[i] = shuffledIndices[j];
+		shuffledIndices[j] = temp;
+	}
+
+    shufflePosition = 0;
 }
 
 void TForm5::ShowRandomWord()
 {
     if (vocabulary.size() == 0) return;
 
-    currentIndex = random(vocabulary.size());
+	 // If we've shown all words, reshuffle
+	if (shufflePosition >= shuffledIndices.size()) {
+		ShuffleWords();
+	}
+
+
+	currentIndex = shuffledIndices[shufflePosition];
+	shufflePosition++;
+
+
     LabelWord->Caption = vocabulary[currentIndex].word;
     LabelMeaning->Visible = false;
     LabelMeaning->Caption = vocabulary[currentIndex].meaning;
