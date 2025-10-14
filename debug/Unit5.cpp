@@ -1,0 +1,84 @@
+﻿#include <vcl.h>
+#pragma hdrstop
+#include "Unit5.h"
+#include <fstream>
+#include <string>
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+
+TForm5 *Form5;
+
+__fastcall TForm5::TForm5(TComponent* Owner)
+    : TForm(Owner)
+{
+    currentIndex = -1;
+}
+
+void __fastcall TForm5::FormCreate(TObject *Sender)
+{
+    Randomize();
+    LoadVocabularyFiles();
+    LabelMeaning->Visible = false;
+
+	if (vocabulary.size() > 0) {
+		ShowRandomWord();
+    } else {
+        LabelWord->Caption = "No vocabulary loaded!";
+		ShowMessage("Place vocab1.txt in the base folder!");
+        ButtonReveal->Enabled = false;
+        ButtonNext->Enabled = false;
+    }
+}
+
+void TForm5::LoadVocabularyFiles()
+{
+
+
+	std::string filePath = ".\\vocab1.txt";
+//	std::string filePath = "C:/temp/vocab1.txt";
+	std::ifstream file(filePath);
+
+    if (file.is_open()) {
+        std::string line;
+		while (std::getline(file, line)) {
+            if (line.empty()) continue;
+
+            size_t comma = line.find(',');
+            if (comma != std::string::npos) {
+                std::string word = line.substr(0, comma);
+                std::string meaning = line.substr(comma + 1);
+
+                VocabWord entry;
+                entry.word = word.c_str();
+                entry.meaning = meaning.c_str();
+                vocabulary.push_back(entry);
+            }
+        }
+        file.close();
+//        ShowMessage("Loaded " + IntToStr((int)vocabulary.size()) + " words!");
+    } else {
+		ShowMessage("Could not open vocab.txt!");
+    }
+}
+
+void TForm5::ShowRandomWord()
+{
+    if (vocabulary.size() == 0) return;
+
+    currentIndex = random(vocabulary.size());
+    LabelWord->Caption = vocabulary[currentIndex].word;
+    LabelMeaning->Visible = false;
+    LabelMeaning->Caption = vocabulary[currentIndex].meaning;
+    ButtonReveal->Caption = "Reveal Meaning";
+}
+
+void __fastcall TForm5::ButtonRevealClick(TObject *Sender)
+{
+    LabelMeaning->Visible = !LabelMeaning->Visible;
+    ButtonReveal->Caption = LabelMeaning->Visible ? "Hide Meaning" : "Reveal Meaning";
+}
+
+void __fastcall TForm5::ButtonNextClick(TObject *Sender)
+{
+    ShowRandomWord();
+}
