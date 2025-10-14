@@ -6,7 +6,7 @@ A simple and effective vocabulary learning tool built with C++ Builder. Perfect 
 
 ## Features ✨
 
-- 🎲 **Random Word Selection** - Shows words in random order for better learning
+- 🎲 **True Random Shuffle** – Uses Fisher–Yates algorithm to show words in a new random order every run.
 - 👁️ **Reveal/Hide Mechanism** - Test yourself before checking the answer
 - 📝 **Simple Text File Format** - Easy to add and manage your vocabulary
 - 🔄 **Quick Navigation** - Move to next word with a single click
