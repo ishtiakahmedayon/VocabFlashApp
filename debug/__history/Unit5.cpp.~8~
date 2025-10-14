@@ -1,0 +1,126 @@
+﻿#include <vcl.h>
+#pragma hdrstop
+#include "Unit5.h"
+#include <fstream>
+#include <string>
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+#include <time.h>
+#include <dos.h>
+#include <chrono>
+
+TForm5 *Form5;
+
+__fastcall TForm5::TForm5(TComponent* Owner)
+    : TForm(Owner)
+{
+//	Randomize();
+	currentIndex = -1;
+	shufflePosition = 0;
+}
+
+
+void BetterRandomize() {
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    srand(seed);  // seed for rand()
+}
+
+void __fastcall TForm5::FormCreate(TObject *Sender)
+{
+
+    LoadVocabularyFiles();
+    LabelMeaning->Visible = false;
+
+	if (vocabulary.size() > 0) {
+		ShuffleWords();  // ← ADD THIS
+		ShowRandomWord();
+    } else {
+        LabelWord->Caption = "No vocabulary loaded!";
+		ShowMessage("Place vocab1.txt in the base folder!");
+        ButtonReveal->Enabled = false;
+        ButtonNext->Enabled = false;
+    }
+}
+
+void TForm5::LoadVocabularyFiles()
+{
+
+
+	std::string filePath = ".\\vocab.txt";
+//	std::string filePath = "C:/temp/vocab1.txt";
+	std::ifstream file(filePath);
+
+    if (file.is_open()) {
+        std::string line;
+		while (std::getline(file, line)) {
+            if (line.empty()) continue;
+
+            size_t comma = line.find(',');
+            if (comma != std::string::npos) {
+                std::string word = line.substr(0, comma);
+                std::string meaning = line.substr(comma + 1);
+
+                VocabWord entry;
+                entry.word = word.c_str();
+                entry.meaning = meaning.c_str();
+                vocabulary.push_back(entry);
+            }
+        }
+        file.close();
+        ShowMessage("Loaded " + IntToStr((int)vocabulary.size()) + " words!");
+    } else {
+		ShowMessage("Could not open vocab.txt!");
+    }
+}
+
+
+void TForm5::ShuffleWords()
+{
+
+	shuffledIndices.clear();
+    for (int i = 0; i < vocabulary.size(); i++) {
+		shuffledIndices.push_back(i);
+	}
+
+	// Fisher-Yates shuffle algorithm
+	for (int i = shuffledIndices.size() - 1; i > 0; i--) {
+		int j = random(i + 1);
+		// Swap
+		int temp = shuffledIndices[i];
+        shuffledIndices[i] = shuffledIndices[j];
+		shuffledIndices[j] = temp;
+	}
+
+    shufflePosition = 0;
+}
+
+void TForm5::ShowRandomWord()
+{
+    if (vocabulary.size() == 0) return;
+
+	 // If we've shown all words, reshuffle
+	if (shufflePosition >= shuffledIndices.size()) {
+		ShuffleWords();
+	}
+
+
+	currentIndex = shuffledIndices[shufflePosition];
+	shufflePosition++;
+
+
+    LabelWord->Caption = vocabulary[currentIndex].word;
+    LabelMeaning->Visible = false;
+    LabelMeaning->Caption = vocabulary[currentIndex].meaning;
+    ButtonReveal->Caption = "Reveal Meaning";
+}
+
+void __fastcall TForm5::ButtonRevealClick(TObject *Sender)
+{
+    LabelMeaning->Visible = !LabelMeaning->Visible;
+    ButtonReveal->Caption = LabelMeaning->Visible ? "Hide Meaning" : "Reveal Meaning";
+}
+
+void __fastcall TForm5::ButtonNextClick(TObject *Sender)
+{
+    ShowRandomWord();
+}

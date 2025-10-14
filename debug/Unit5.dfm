@@ -1,7 +1,7 @@
 object Form5: TForm5
   Left = 0
   Top = 0
-  Caption = 'Vocabulary Flashcards'
+  Caption = 'VocabFlash App'
   ClientHeight = 461
   ClientWidth = 584
   Color = clCream

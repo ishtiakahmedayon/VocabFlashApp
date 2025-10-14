@@ -1,4 +1,3 @@
-//---------------------------------------------------------------------------
 #ifndef Unit5H
 #define Unit5H
 //---------------------------------------------------------------------------
@@ -9,7 +8,6 @@
 #include <vector>
 //---------------------------------------------------------------------------
 
-// Simple structure to hold word and meaning
 struct VocabWord {
     String word;
     String meaning;
@@ -28,17 +26,19 @@ __published:
     void __fastcall ButtonNextClick(TObject *Sender);
 
 private:
-	std::vector<VocabWord> vocabulary;
-	int currentIndex;
+    std::vector<VocabWord> vocabulary;
+    std::vector<int> shuffledIndices;
+    int currentIndex;
+    int shufflePosition;
 
-	void LoadVocabularyFiles();
-	void ShowRandomWord();
+    void LoadVocabularyFiles();
+    void ShowRandomWord();
+    void ShuffleWords();
 
-public:		// User declarations
+public:
     __fastcall TForm5(TComponent* Owner);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TForm5 *Form5;
 //---------------------------------------------------------------------------
 #endif
-
