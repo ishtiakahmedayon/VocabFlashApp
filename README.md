@@ -1,4 +1,4 @@
-# Vocabulary Flashcard App 📚
+# VocabFlash App 📚
 
 A simple and effective vocabulary learning tool built with C++ Builder. Perfect for students and language learners who want to practice vocabulary through interactive flashcards.
 
