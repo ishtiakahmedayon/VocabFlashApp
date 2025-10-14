@@ -2,7 +2,7 @@
 
 A simple and effective vocabulary learning tool built with C++ Builder. Perfect for students and language learners who want to practice vocabulary through interactive flashcards.
 
-![App Screenshot](./screenshots/app-screenshot.png)
+![App Screenshot](./screenshots/)
 
 ## Features ✨
 
